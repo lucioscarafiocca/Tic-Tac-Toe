@@ -1,3 +1,41 @@
 body {
-    background-color: black;
+    background-color: rgba(226, 57, 5, 0.623);
 }
+
+.father {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 1000px;
+    width: 1000px;
+    
+}
+
+.blocks {
+    background-color: red;
+    border: 1px solid black;
+    font-size: 100px;
+}
+
+.buttons > button {
+    height: 50px;
+    width: 200px;
+    border-radius: 50px;
+    gap: 20px;
+    outline: none;
+    border: 1px;
+}
+
+.buttons > p {
+    font-size: 30px;
+}
+
+.butto {
+    height: 50px;
+    width: 200px;
+    border-radius: 50px;
+    gap: 20px;
+    outline: none;
+    border: 1px;
+}
+

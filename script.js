@@ -1,35 +1,14 @@
-function createUser (name) {
-    const discordName = "@" + name;
-  
-    let reputation = 0;
-    const getReputation = () => reputation;
-    const giveReputation = () => reputation++;
-  
-    return { name, discordName, getReputation, giveReputation };
-  }
-  
-  const josh = createUser("josh");
-  josh.giveReputation();
-  josh.giveReputation();
-  
-  console.log({
-    discordName: josh.discordName,
-    reputation: josh.getReputation()
-  });
-  // logs { discordName: "@josh", reputation: 2 }
 
-
-
-////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 //////////checks and changes game turn
 const turn = function turn () {
   let turn = ""
+  const resetTurn = () => turn = ""
   const getTurn = () => turn
   const setTurn = function(decision) {
-    if (turn == "cirlce") {
+    if (turn == "circle") {
       turn = "exe"
     } else if (turn == "exe") {
       turn = "circle"
@@ -37,7 +16,7 @@ const turn = function turn () {
       turn = `${decision}`
     }
   } 
-  return { getTurn, setTurn}
+  return { getTurn, setTurn, resetTurn}
 } ()
 
 
@@ -46,11 +25,7 @@ const turn = function turn () {
 
 
 
-const players = {} ;
 
-const flowOfGame = {}
-
-const array = []
 
 ///asigns all nine squares of the DOM numeric values
 const assignDOM = function () {
@@ -63,11 +38,15 @@ const assignDOM = function () {
     seven = getDOM("7")
     eight = getDOM("8")
     nine = getDOM("9")
+    const array = [one,two,three,four,five,six,seven,eight,nine]
+    array.forEach(element => {
+      eventlistener(element)
+    })
     return [one,two,three,four,five,six,seven,eight,nine]
 }  ()
 
 
-const gameboard = { array : assignDOM}
+
 
 
 ////creates the dom and gives it class
@@ -82,17 +61,20 @@ function getDOM(name) {
 
 ///event listener for blocks
 function eventlistener(one) {
-  const first= document.createElement("div")
-  first.addEventListener("click", () => {
-    if (turn.getTurn() = "exe") {
-      first.textContent = "X"
+  one.addEventListener("click", () => {
+    if (squareUsed(one) == "true") {
+    if (turn.getTurn() == "exe") {
+      one.textContent = "X"
       turn.setTurn()
       moves.addMoveExe()
-    } else {
-      first.textContent = "O"
+      moves.announceWin() 
+    } else if (turn.getTurn() == "circle") {
+      one.textContent = "O"
       turn.setTurn()
       moves.addMoveCircle()
-    }
+      moves.announceWin()
+      
+    }}
   })
 }
 
@@ -109,9 +91,9 @@ const getValues = function() {
   const first_row = [elements[0],elements[1],elements[2]]
   const second_row = [elements[3],elements[4],elements[5]]
   const third_row = [elements[6],elements[7],elements[8]]
-  const first_vertical = [elements[0],elements[0],elements[0]]
-  const second_vertical = [elements[1],elements[1],elements[1]]
-  const third_vertical =  [elements[2],elements[2],elements[2]]
+  const first_vertical = [elements[0],elements[3],elements[6]]
+  const second_vertical = [elements[1],elements[4],elements[7]]
+  const third_vertical =  [elements[2],elements[5],elements[8]]
   return {first_row, second_row , third_row ,textContent , first_vertical, second_vertical , third_vertical}
 }
 
@@ -137,7 +119,15 @@ const winningMoves =  function() {
       return "WIN"
     }
   } 
-  return {straight,diagonal}
+  const tie = () => {
+    const array = assignDOM
+    const areFull = (element) => element.textContent != "" 
+    if(array.every(areFull)) {
+      return "full"
+    }
+  }
+
+  return {straight,diagonal,tie}
 }
 
 ///check if winning combination
@@ -162,9 +152,10 @@ const checkWins = function(moves_played,type) {
     function checkWin(element) {
       return element == "WIN";
     }
-    if (array.find(checkWin) != undefined) {
+    if (array.find(checkWin) ) {
       return "Victory"
-    } else { return "Defeat"}
+    } else if (winningMoves().tie() == "full") {
+      return "Tie"}
   }
   return result1()
   
@@ -173,21 +164,68 @@ const checkWins = function(moves_played,type) {
 
 ///////////checks for minimum requeirements for a win 
 const moves = function() {
-  const moves_played_circle = ""
-  const moves_played_exe = ""
-  const addMoveCircle = () => moves_played_circle++
-  const addMoveExe = () =>  moves_played_exe++
-  const circle = checkWins(moves_played_circle,"O") 
-  const exe = checkWins(moves_played_exe,"X") 
-  const verdict = () => {
-    if(circle == "" || exe == "") {
-      return "win"
-    } else { return "asjdasdasd"}
-}
+  let moves_played_circle = 0
+  let moves_played_exe = 0
+  const resetCircle = () => moves_played_circle = 0
+  const resetExe = () => moves_played_exe = 0
+  const addMoveCircle = () => ++moves_played_circle
+  const addMoveExe = () =>  ++moves_played_exe
+  const announceWin = function() {
+    const circle = checkWins(moves_played_circle,"O") 
+    const exe = checkWins(moves_played_exe,"X") 
+    if(circle == "Victory" || exe == "Victory") {
+        return alert("WINNNNNNNNNNNNNNNN")
+      } else if (circle == "Tie" || exe == "Tie"){ return alert("TIEEEEEEEEEEEEEEEEEEEEEEEEEE")}
 
-  return {addMoveCircle, addMoveExe,verdict}
+  }
+  return {addMoveCircle, addMoveExe,announceWin,resetCircle,resetExe}
 }() 
 
+//////selects users turn 
+const selectTurn = function() {
+  const button_exe =  document.querySelector(".button-x")
+  const button_circle =  document.querySelector(".button-o")
+    button_exe.addEventListener("click", () => {
+      turn.setTurn("exe")
+      setNames("X","O")
+    })
+    button_circle.addEventListener("click", () => {
+      turn.setTurn("circle")
+      setNames("O","X")
+    })
+
   
-console.log(checkWins(3,"X")) 
+} ()
+
+////checks if square has been used 
+const squareUsed = function(square) {
+  if(square.textContent == "" ) {
+    return "true"
+  } 
+}
+
+
+///restarts game
+const clean = function() {
+  const button = document.querySelector(".butto")
+  button.addEventListener("click",(element) => {
+    array = assignDOM
+    assignDOM.forEach(element => {
+      element.textContent = ""
+    })
+    turn.resetTurn()
+    moves.resetCircle()
+    moves.resetExe()
+
+  })
+}()
+
+const setNames = (type,other) => {
+  const name1 = prompt("Player 1 name")
+  const name2 = prompt("Player 2 name")
+  const p = document.querySelector(".name-1")
+  const p2 = document.querySelector(".name-2")
+  p.textContent = `${type}: ${name1} `
+  p2.textContent = `${other}: ${name2} `
+}
 
