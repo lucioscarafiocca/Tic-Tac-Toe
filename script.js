@@ -173,9 +173,10 @@ const moves = function() {
   const announceWin = function() {
     const circle = checkWins(moves_played_circle,"O") 
     const exe = checkWins(moves_played_exe,"X") 
-    if(circle == "Victory" || exe == "Victory") {
-        return alert("WINNNNNNNNNNNNNNNN")
-      } else if (circle == "Tie" || exe == "Tie"){ return alert("TIEEEEEEEEEEEEEEEEEEEEEEEEEE")}
+    if(circle == "Victory" ) {
+        return result().winner("O")
+      } else if (circle == "Tie" || exe == "Tie"){ return result().tie()}
+      else if (exe == "Victory"){return result().winner("X") }
 
   }
   return {addMoveCircle, addMoveExe,announceWin,resetCircle,resetExe}
@@ -216,16 +217,44 @@ const clean = function() {
     turn.resetTurn()
     moves.resetCircle()
     moves.resetExe()
+    result().clean()
+  const p = document.querySelector(".name-1")
+   const p2 = document.querySelector(".name-2")
+   p.textContent = ""
+   p2.textContent = ""
 
   })
 }()
 
+//display player names
 const setNames = (type,other) => {
-  const name1 = prompt("Player 1 name")
-  const name2 = prompt("Player 2 name")
+  const name1 = prompt("Player 1 name").toUpperCase()
+  const name2 = prompt("Player 2 name").toUpperCase()
   const p = document.querySelector(".name-1")
   const p2 = document.querySelector(".name-2")
-  p.textContent = `${type}: ${name1} `
-  p2.textContent = `${other}: ${name2} `
+  p.textContent = `${name1} is ${type}  `
+  p2.textContent = ` ${name2} is ${other}`
+ 
+ return{}
 }
+
+//displaye winenrs or tie
+
+const result = function() {
+  const winner = (type) => {
+    const p = document.querySelector(".anounce")
+   p.textContent = `${type} is the winner`
+  }
+  const tie = () => {
+    const p = document.querySelector(".anounce")
+   p.textContent = "Game was Tied"
+  }
+  const clean = () => {
+    const p = document.querySelector(".anounce")
+    p.textContent = ""
+  }
+   return {winner,tie,clean}
+}
+
+
 
